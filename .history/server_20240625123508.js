@@ -1,0 +1,28 @@
+const express = require('express')
+const app = express()
+const path = require('path');
+const PORT = 8000
+
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
+app.get('/', (request, response) => {
+    const indexPath = path.join(__dirname, '/public/index.html'); // adjust the path accordingly
+    response.sendFile(indexPath);
+  })
+
+  app.get('/css/style.css', (req, res) => {
+    res.sendFile(__dirname + '/public/css/style.css');
+  });
+  
+  app.get('/images/pizza.jpg', (req, res) => {
+    res.sendFile(__dirname + '/public/images/pizza.jpg');
+  });
+
+app.get('/api', (request, response) => {
+    response.json()
+})
+
+app.listen(PORT, () => {
+    console.log(`The server is running on port ${PORT}! Go get it..........`)
+})

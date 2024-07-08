@@ -1,0 +1,48 @@
+<%- include('layout/header.ejs') %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 mx-auto mt-4">
+            <div class="card shadow">
+                <div class="card-header bg-success">
+                    <h3 class="text-light text-center">Edit Admin (<%= admin.name %>)</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form action="/update/<%= admin._id %>" method="post" id="add-form" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name">Name</label>
+                            <input type="text" name="name" value="<%= admin.name %>" class="form-control form-control-lg" placeholder="Enter full name" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="username">Username</label>
+                            <input type="text" name="username" value="<%= admin.username %>" class="form-control form-control-lg" placeholder="Enter username" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" value="<%= admin.email %>" class="form-control form-control-lg" placeholder="Enter email" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" value="<%= admin.password %>" class="form-control form-control-lg" placeholder="Enter password" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="name">Phone</label>
+                            <input type="tel" name="phone" value="<%= admin.phone %>" class="form-control form-control-lg" placeholder="Enter phone number" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Select Image</label>
+                            <input class="form-control form-control-lg" type="file" name="image" />
+                            <img src="/<%= admin.image %>" width="100" class="img-thumbnail mt-1">
+                        </div>
+                        <input type="hidden" name="old_image" value="<%= admin.image %>">
+                        <div class="mb-3">
+                            <input type="submit" name="submit" value="Update Admin" class="btn btn-success btn-lg" />
+                        </div>
+                    </form>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('layout/footer.ejs') %>

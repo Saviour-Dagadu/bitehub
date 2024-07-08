@@ -1,0 +1,27 @@
+<%- include('layout/header.ejs') %>
+
+<div class="class container">
+    <div class="row">
+        <div class="col-lg-6 mx-auto mt-4">
+            <div class="card-shadow">
+                <div class="card-header bg-primary">
+                    <h3 class="text-light">Add new Admin</h3>
+                </div>
+                div.card-body <p-4>
+                    <form action="/add_admin" method="post" id="add-form" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name">Name</label>
+                            <input type="text" name="name" class="form-control form-control-lg" placeholder="Enter name" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" class="form-control form-control-lg" placeholder="Enter email" required />
+                        </div>
+                    </form>
+                </p-4> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('layout/footer.ejs') %>

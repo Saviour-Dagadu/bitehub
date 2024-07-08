@@ -1,0 +1,51 @@
+const express = require('express');
+const app = express();
+const routes = require('./routes/routes');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const PORT = process.env.PORT || 8000;
+
+// Use .env file in config folder
+require('dotenv').config({ path: './config/.env' });
+
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
+// Database connection
+mongoose.connect(process.env.DB_URI);
+
+const db = mongoose.connection;
+db.on('error', (error) => console.error('MongoDB connection error:', error));
+db.once('open', () => console.log('Connected to the database!'));
+
+// Middleware for parsing request bodies
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+// Session configuration
+app.use(
+  session({
+    secret: 'my secret key',
+    saveUninitialized: true,
+    resave: false,
+  })
+);
+
+// Set local variables for response
+app.use((req, res, next) => {
+  res.locals.message = req.session.message;
+  delete req.session.message;
+  next();
+});
+
+app.use(express.static('uploads'));
+
+// Set view engine
+app.set('view engine', 'ejs');
+
+// Use routes defined in routes.js
+app.use('/', routes);
+
+app.listen(PORT, () => {
+  console.log(`The server is running on https://localhost:${PORT}! Go get it..........`);
+});

@@ -1,0 +1,84 @@
+<%- include('layout/header.ejs') %>
+
+<div class="container">
+  <div class="row my-4">
+    <div class="col-lg-12">
+      <h1>Manage Admin</h1>
+      <div id="successMessage" class="alert alert-success" style="display: none;"></div>
+      <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+      <div class="mb-3">
+        <a class="btn btn-primary btn-lg" href="/add_admin">Add Admin</a>
+      </div>
+      <div class="table-responsive">
+        <% if (admin.length > 0) { %> 
+          <table class="table table-striped text-center my-3">
+            <thead> 
+              <tr class="table-dark">
+                <th>ID</th>
+                <th>Image</th>
+                <th>Full Name</th>
+                <th>Username</th>
+                <th>E-mail</th>
+                <th>Phone</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% admin.forEach((row, index) => { %>
+                <tr class="align-middle">
+                  <td><%= index + 1 %></td>
+                  <td><img src="/uploads/<%= row.image %>" width="50" class="img-thumbnail" alt="Admin"></td>
+                  <td><%= row.name %></td>
+                  <td><%= row.username %></td>
+                  <td><%= row.email %></td>
+                  <td><%= row.phone %></td>
+                  <td>
+                    <a href="/edit/<%= row._id %>" class="text-success"><i class="fas fa-edit fa-lg mx-1"></i></a>
+                    <a href="/delete/<%= row._id %>" class="text-danger"><i class="fas fa-trash fa-lg mx-1"></i></a>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } else { %>
+          <h1 class="text-center text-secondary mt-5">No admin found in the database!</h1>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showSuccessMessage(message) {
+    const successDiv = document.getElementById('successMessage');
+    successDiv.textContent = message;
+    successDiv.style.display = 'block';
+    setTimeout(() => {
+      successDiv.style.display = 'none';
+    }, 10000); // Hide after 10 seconds (10000 milliseconds)
+  }
+
+  function showErrorMessage(message) {
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    setTimeout(() => {
+      errorDiv.style.display = 'none';
+    }, 10000); // Hide after 10 seconds (10000 milliseconds)
+  }
+
+  // Check for success or error message in query parameters
+  const params = new URLSearchParams(window.location.search);
+  const successMessage = params.get('success');
+  const errorMessage = params.get('error');
+
+  if (successMessage) {
+    showSuccessMessage(successMessage);
+  }
+
+  if (errorMessage) {
+    showErrorMessage(errorMessage);
+  }
+</script>
+
+<%- include('layout/footer.ejs') %>

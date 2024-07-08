@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Important to make website responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Website</title>
+
+    <!-- Link our CSS file -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Navbar Section Starts Here -->
+	<section class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html" title="Logo">
+					<h2>Bite<span>Hub</span></h2><h6><span>The Food Heaven</span></h6>
+                    <!-- <img src="images/logo.png" alt="Restaurant Logo" class="img-responsive"> -->
+                </a>
+            </div>
+
+            <div class="menu text-right">
+                <ul>
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="categories.html">Categories</a>
+                    </li>
+                    <li>
+                        <a href="foods.html">Foods</a>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                </ul> 
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+    </section>
+    <!-- Navbar Section Ends Here -->
+
+    <!-- fOOD sEARCH Section Starts Here -->
+    <section class="food-search text-center">
+        <div class="container">
+            
+            <form action="underConstruction.html" method="POST">
+                <input type="search" name="search" placeholder="Search for Food.." required>
+                <input type="submit" name="submit" value="Search" class="btn btn-primary">
+            </form>
+
+        </div>
+    </section>
+    <!-- fOOD sEARCH Section Ends Here -->
+
+     <!-- Contact Section Starts Here -->
+     <section class="food-menu">
+        <div class="container">
+            <h2 class="text-center">Contact Us ☎️</h2>
+            <br /><br />
+			 <!-----This is to display whether admin was able to add or not---->
+			 <!-- <?php
+                    if(isset($_SESSION['contact']))
+                    {
+                        echo $_SESSION['contact'];   //Displaying session message
+                        unset($_SESSION['contact']); //Removing session message
+                    }
+        ?> -->
+        <br /><br /><br />
+
+            <section id="info">
+      <div class="container">
+        <div class="info info-image">
+          <img src="images/logo.png" alt="Member Image"/>
+        </div>
+        <div class="info info-text">
+          <h3>Our Business Info</h3>
+          <div class="info-text-call">
+            <h4>Call Now</h4>
+            <address>+233248929076</address>
+          </div>
+        <div class="info-text-email">
+            <h4>Email us</h4>
+            <address>support@food-order.com</address>
+        </div>
+        </div>
+      </div>
+    </section>
+    
+<section id="message">
+	     <div class="container">
+		     <div class="message-top">
+			    <h3>Send us your message</h3>
+			 </div>
+			 <div class="message-bottom">
+			    <form id = "myForm" action="" method="POST">
+				   <div class="form-group">
+				      <label for="name">Name</label>
+					  <input type="text" id="name" name="name" class="input" placeholder="John Doe"/>
+				   </div>
+				   <div class="form-group">
+				      <label for="email">Email</label>
+					  <input type="email" id="email" name="email" class="input" placeholder="example123@food.com" />
+				   </div>
+				   <div class="form-group">
+				      <label for="email">Contact Number</label>
+					  <input type="tel" id="contact" name="contact" class="input" placeholder="+23324967594" />
+				   </div>
+				   <div class="form-group">
+				       <label for="message">Message</label>
+					   <textarea id="message" name="message" placeholder="Message"></textarea>
+				   </div>
+				   <input type="submit" name="submit" value="Send" class="btn btn-secondary"/>
+				   <button type="button" class="btn btn-primary" onclick="clearInput()">Clear</button>
+				</form>
+
+				<!---Add Message into database---->
+				<!-- <?php
+					//Check whether the submit button is clicked or not
+					if(isset($_POST['submit']))
+					{
+						//echo "Clicked";
+
+						//1. Get values from contact form
+						$name = mysqli_real_escape_string($con, $_POST['name']);
+						$email = mysqli_real_escape_string($con, $_POST['email']);
+						$contact = mysqli_real_escape_string($con, $_POST['contact']);
+						$message = mysqli_real_escape_string($con, $_POST['message']);
+						$contact_date = date("Y-m-d h:i:sa");
+						$status = "Message Received";
+
+						//2. Create SQL Query to Save the data into database
+						$sql = "INSERT INTO tbl_contact SET
+							name = '$name',
+							email = '$email',
+							contact = '$contact',
+							message = '$message',
+							contact_date = '$contact_date',
+                            status = '$status'
+						";
+
+						//3. Execute Query and save data in database
+						$res = mysqli_query($con, $sql) or 
+						die(mysqli_query());
+
+						//4. Check Whether the data is inserted or not and display session message
+						if($res==TRUE)
+						{
+							//Data Inserted
+							$_SESSION['contact'] = "<div class='success text-center'>Message Sent Successfully.</div>";
+							header('location:'.SITEURL.'contact.php');
+						}
+						else
+						{
+							//Failed to insert data
+							$_SESSION['contact'] = "<div class='error text-center'>Failed to Send Message.</div>";
+							header('location:'.SITEURL.'contact.php');
+						}
+					}
+				?> -->
+			 </div>
+		 </div>
+	  </section>
+
+            <div class="clearfix"></div>
+
+        </div>
+
+    </section>
+    <!-- Contact Section Ends Here -->
+
+    <script>
+	    function clearInput(){
+			var form = document.getElementById("myForm"); // replace "myForm" with the ID of your form
+			var elements = form.elements;
+			for (var i = 0; i < elements.length; i++) {
+				if (elements[i].type === "text" || elements[i].type === "email" || elements[i].type === "tel" || elements[i].type === "textarea") {
+					elements[i].value = "";
+				}
+			}
+		}
+	  </script>
+<!-- social Section Starts Here -->
+<section class="social">
+	<div class="container text-center">
+		<ul>
+			<li>
+				<a href="https://www.facebook.com/saviou/"><img src="https://img.icons8.com/fluent/50/000000/facebook-new.png"/></a>
+			</li>
+			<li>
+				<a href="https://www.instagram.com/saviour_dagadu/"><img src="https://img.icons8.com/fluent/48/000000/instagram-new.png"/></a>
+			</li>
+			<li>
+				<a href="https://twitter.com/savicode"><img src="https://img.icons8.com/fluent/48/000000/twitter.png"/></a>
+			</li>
+		</ul>
+	</div>
+</section>
+<!-- social Section Ends Here -->
+
+<!-- footer Section Starts Here -->
+<section class="footer">
+	<div class="container text-center">
+		<p>All rights reserved. Designed By <a href="https://saviourdagadu.netlify.app/">@savicode</a></p>
+	</div>
+</section>
+<!-- footer Section Ends Here -->
