@@ -26,138 +26,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Route to render login page
-router.get('/login', (req, res) => {
-    res.render('login', { title: 'Login', message: null, admin: req.session.admin });
-});
-
-// Handle login form submission
-router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    try {
-        const admin = await Admin.findOne({ username });
-
-        console.log('Admin found:', admin);
-
-        if (!admin) {
-            console.log('Admin not found');
-            return res.render('login', { title: 'Login', message: 'Invalid username or password' });
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, admin.password);
-        console.log('Password valid:', isPasswordValid);
-
-        if (isPasswordValid) {
-            req.session.adminId = admin._id;
-            res.redirect('/');
-        } else {
-            res.render('login', { title: 'Login', message: 'Invalid username or password' });
-        }
-    } catch (error) {
-        console.error('Error during login:', error);
-        res.render('login', { title: 'Login', message: 'An error occurred during login. Please try again.' });
-    }
-});
-
-// Route to handle logout
-router.post('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).send({ message: 'Failed to logout' });
-        }
-        res.redirect('/login');
-    });
-});
-
-// Protect routes that require authentication
-router.use(redirectToLogin);
-
-// Manage Admin route.
-router.get('/admin', isAuthenticated, async (req, res) => {
-    try {
-        const allAdmins = await Admin.find();
-        const loggedInAdmin = await Admin.findById(req.session.adminId);
-        
-        if (!allAdmins) {
-            return res.status(404).send({ message: "No admins found." });
-        }
-        
-        res.render('manage-admin', {
-            title: 'Manage Admin Page',
-            allAdmins: allAdmins,
-            loggedInAdmin: loggedInAdmin,
-            admin: loggedInAdmin, // Pass loggedInAdmin to ensure it's defined in the header.ejs template
-        });
-    } catch (err) {
-        console.error('Error fetching admins:', err);
-        res.status(500).send({ message: err.message });
-    }
-});
-
-// Dashboard route or Home route
-router.get('/', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('index', { title: 'Darshboard', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
-// Example for manage-category route
-router.get('/category', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('manage-category', { title: 'Manage Categories', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
-// Example for manage-order route
-router.get('/order', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('manage-order', { title: 'Manage Orders', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
-// Example for manage-food route
-router.get('/food', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('manage-food', { title: 'Manage Foods', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
-
-// Add admin form route
-router.get('/add_admin', (req, res) => {
-    res.render('add_admin', { title: 'Add New Admin' });
-});
-
-// Get all admin route
-router.get("/admin", async (req, res) => {
-    try {
-        const admin = await Admin.find();
-        res.render('manage-admin', {
-            title: 'Manage Admin Page',
-            admin: admin,
-        });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
 // Route to handle adding an admin
 router.post('/add_admin', upload.single('image'), async (req, res) => {
     try {
@@ -194,6 +62,45 @@ router.post('/add_admin', upload.single('image'), async (req, res) => {
         console.error('Error adding admin:', err);
         res.status(500).send({ message: 'Failed to add admin.' });
     }
+});
+
+
+/// Get all admin route
+router.get("/admin", async (req, res) => {
+    try {
+        const admin = await Admin.find();
+        res.render('manage-admin', {
+            title: 'Manage Admin Page',
+            admin: admin,
+        });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+});
+
+// Dashboard route or Home route
+router.get('/', (req, res) => {
+    res.render('index', { title: 'Dashboard' });
+});
+
+// Category management route
+router.get('/category', (req, res) => {
+    res.render('manage-category', { title: 'Manage Categories' });
+});
+
+// Food management route
+router.get('/food', (req, res) => {
+    res.render('manage-food', { title: 'Manage Foods' });
+});
+
+// Order management route
+router.get('/order', (req, res) => {
+    res.render('manage-order', { title: 'Manage Orders' });
+});
+
+// Add admin form route
+router.get('/add_admin', (req, res) => {
+    res.render('add_admin', { title: 'Add New Admin' });
 });
 
 // Edit an Admin route
@@ -276,6 +183,60 @@ router.get('/delete/:id', async (req, res) => {
     } catch (err) {
         console.error('Error deleting admin:', err);
         res.redirect('/admin?error=Failed to delete admin!');
+    }
+});
+
+// Route to render login page
+router.get('/login', (req, res) => {
+    res.render('login', { title: 'Login', message: null });
+});
+
+// Handle login form submission
+router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const admin = await Admin.findOne({ username });
+
+        console.log('Admin found:', admin);
+
+        if (!admin) {
+            console.log('Admin not found');
+            return res.render('login', { title: 'Login', message: 'Invalid username or password' });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, admin.password);
+        console.log('Password valid:', isPasswordValid);
+
+        if (isPasswordValid) {
+            req.session.adminId = admin._id;
+            res.redirect('/');
+        } else {
+            res.render('login', { title: 'Login', message: 'Invalid username or password' });
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.render('login', { title: 'Login', message: 'An error occurred during login. Please try again.' });
+    }
+});
+
+// Protect routes that require authentication
+router.use(isAuthenticated);
+
+// Protect routes that require authentication
+router.get('/dashboard', isAuthenticated, (req, res) => {
+    res.render('index', { title: 'Dashboard' });
+});
+
+router.get('/admin', isAuthenticated, async (req, res) => {
+    try {
+        const admin = await Admin.find();
+        res.render('manage-admin', {
+            title: 'Manage Admin Page',
+            admin: admin,
+        });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
     }
 });
 

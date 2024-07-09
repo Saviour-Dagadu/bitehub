@@ -41,12 +41,12 @@
                         <li class="nav-item">
                             <span class="nav-link">Welcome, <%= admin.name %></span>
                         </li>
-                        <!-- Add logout link/icon here -->
                         <li class="nav-item">
-                            <a class="nav-link" href="/logout">Logout</a>
+                            <form action="/logout" method="POST" class="nav-link">
+                                <button type="submit" class="btn btn-link">Logout</button>
+                            </form>
                         </li>
                     <% } else { %>
-                        <!-- Add login link here if needed -->
                         <li class="nav-item">
                             <a class="nav-link" href="/login">Login</a>
                         </li>

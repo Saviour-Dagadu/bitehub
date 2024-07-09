@@ -28,7 +28,7 @@ const upload = multer({ storage: storage });
 
 // Route to render login page
 router.get('/login', (req, res) => {
-    res.render('login', { title: 'Login', message: null, admin: req.session.admin });
+    res.render('login', { title: 'Login', message: null });
 });
 
 // Handle login form submission
@@ -60,85 +60,45 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Route to handle logout
-router.post('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).send({ message: 'Failed to logout' });
-        }
-        res.redirect('/login');
-    });
-});
-
 // Protect routes that require authentication
 router.use(redirectToLogin);
 
-// Manage Admin route.
+// Protect routes that require authentication
+router.get('/dashboard', isAuthenticated, (req, res) => {
+    res.render('index', { title: 'Dashboard' });
+});
+
 router.get('/admin', isAuthenticated, async (req, res) => {
     try {
-        const allAdmins = await Admin.find();
-        const loggedInAdmin = await Admin.findById(req.session.adminId);
-        
-        if (!allAdmins) {
-            return res.status(404).send({ message: "No admins found." });
-        }
-        
+        const admin = await Admin.find();
         res.render('manage-admin', {
             title: 'Manage Admin Page',
-            allAdmins: allAdmins,
-            loggedInAdmin: loggedInAdmin,
-            admin: loggedInAdmin, // Pass loggedInAdmin to ensure it's defined in the header.ejs template
+            admin: admin,
         });
     } catch (err) {
-        console.error('Error fetching admins:', err);
         res.status(500).send({ message: err.message });
     }
 });
 
 // Dashboard route or Home route
-router.get('/', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('index', { title: 'Darshboard', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
+router.get('/', (req, res) => {
+    res.render('index', { title: 'Dashboard' });
 });
 
-// Example for manage-category route
-router.get('/category', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('manage-category', { title: 'Manage Categories', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
+// Category management route
+router.get('/category', (req, res) => {
+    res.render('manage-category', { title: 'Manage Categories' });
 });
 
-// Example for manage-order route
-router.get('/order', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('manage-order', { title: 'Manage Orders', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
+// Food management route
+router.get('/food', (req, res) => {
+    res.render('manage-food', { title: 'Manage Foods' });
 });
 
-// Example for manage-food route
-router.get('/food', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('manage-food', { title: 'Manage Foods', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
+// Order management route
+router.get('/order', (req, res) => {
+    res.render('manage-order', { title: 'Manage Orders' });
 });
-
 
 // Add admin form route
 router.get('/add_admin', (req, res) => {

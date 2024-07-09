@@ -36,22 +36,6 @@
                         <a class="nav-link" href="/order"><i class="fas fa-shopping-cart me-1"> Orders </i></a>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto">
-                    <% if (admin) { %>
-                        <li class="nav-item">
-                            <span class="nav-link">Welcome, <%= admin.name %></span>
-                        </li>
-                        <!-- Add logout link/icon here -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout">Logout</a>
-                        </li>
-                    <% } else { %>
-                        <!-- Add login link here if needed -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login">Login</a>
-                        </li>
-                    <% } %>
-                </ul>
             </div>
         </div>
     </nav>

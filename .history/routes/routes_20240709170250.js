@@ -79,18 +79,12 @@ router.get('/admin', isAuthenticated, async (req, res) => {
         const allAdmins = await Admin.find();
         const loggedInAdmin = await Admin.findById(req.session.adminId);
         
-        if (!allAdmins) {
-            return res.status(404).send({ message: "No admins found." });
-        }
-        
         res.render('manage-admin', {
             title: 'Manage Admin Page',
             allAdmins: allAdmins,
             loggedInAdmin: loggedInAdmin,
-            admin: loggedInAdmin, // Pass loggedInAdmin to ensure it's defined in the header.ejs template
         });
     } catch (err) {
-        console.error('Error fetching admins:', err);
         res.status(500).send({ message: err.message });
     }
 });

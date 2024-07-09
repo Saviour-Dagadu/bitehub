@@ -73,24 +73,14 @@ router.post('/logout', (req, res) => {
 // Protect routes that require authentication
 router.use(redirectToLogin);
 
-// Manage Admin route.
 router.get('/admin', isAuthenticated, async (req, res) => {
     try {
-        const allAdmins = await Admin.find();
-        const loggedInAdmin = await Admin.findById(req.session.adminId);
-        
-        if (!allAdmins) {
-            return res.status(404).send({ message: "No admins found." });
-        }
-        
+        const admin = await Admin.find(req.session.adminId);
         res.render('manage-admin', {
             title: 'Manage Admin Page',
-            allAdmins: allAdmins,
-            loggedInAdmin: loggedInAdmin,
-            admin: loggedInAdmin, // Pass loggedInAdmin to ensure it's defined in the header.ejs template
+            admin: admin,
         });
     } catch (err) {
-        console.error('Error fetching admins:', err);
         res.status(500).send({ message: err.message });
     }
 });

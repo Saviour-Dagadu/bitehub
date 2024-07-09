@@ -14,7 +14,7 @@
     <!-- Navbar Section Starts Here -->
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a href="/" class="navbar-brand"><i class="fas fa-pizza-slice me-1"></i>BiteHub</a>
+            <a href="../index.ejs" class="navbar-brand"><i class="fas fa-pizza-slice me-1"></i>BiteHub</a>
             <button class="navbar-toggler" data-bs-target="#my-nav" data-bs-toggle="collapse" aria-controls="my-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -35,22 +35,6 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="/order"><i class="fas fa-shopping-cart me-1"> Orders </i></a>
                     </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <% if (admin) { %>
-                        <li class="nav-item">
-                            <span class="nav-link">Welcome, <%= admin.name %></span>
-                        </li>
-                        <!-- Add logout link/icon here -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout">Logout</a>
-                        </li>
-                    <% } else { %>
-                        <!-- Add login link here if needed -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login">Login</a>
-                        </li>
-                    <% } %>
                 </ul>
             </div>
         </div>
