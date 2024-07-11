@@ -26,6 +26,15 @@ db.once('open', () => console.log('Connected to the database!'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.locals.successMessage = req.session.successMessage;
+  res.locals.errorMessage = req.session.errorMessage;
+  delete req.session.successMessage;
+  delete req.session.errorMessage;
+  next();
+});
+
+
 // Session configuration
 app.use(
   session({
@@ -43,6 +52,9 @@ app.use((req, res, next) => {
   delete req.session.message;
   next();
 });
+
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
 
 // Set view engine
 app.set('view engine', 'ejs');

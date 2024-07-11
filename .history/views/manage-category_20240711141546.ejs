@@ -1,0 +1,23 @@
+<%- include('layout/header.ejs')  %>
+
+<div class="class container">
+    <div class="class row">
+        <div class="class col-lg-12">
+            <% if (successMessage) { %>
+                <div class="alert alert-success text-center"><%= successMessage %></div>
+            <% } %>
+
+            <% if (errorMessage) { %>
+                <div class="alert alert-danger text-center"><%= errorMessage %></div>
+            <% } %>
+            <h1>Manage Food Categories</h1>
+            <div id="successMessage" class="alert alert-success text-center" style="display: none;"></div>
+            <div id="errorMessage" class="alert alert-danger text-center" style="display: none;"></div>
+            <div class="mb-3">
+                <a class="btn btn-primary btn-lg" href="/add_category">Add category</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('layout/footer.ejs')  %>

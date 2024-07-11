@@ -4,6 +4,7 @@ const routes = require('./routes/routes');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const path = require('path');
+const MongoStore = require('connect-mongo');
 const PORT = process.env.PORT || 8000;
 
 // Use .env file in config folder
@@ -22,9 +23,30 @@ const db = mongoose.connection;
 db.on('error', (error) => console.error('MongoDB connection error:', error));
 db.once('open', () => console.log('Connected to the database!'));
 
-// Middleware for parsing request bodies
-app.use(express.urlencoded({ extended: false }));
+// Middleware for parsing JSON and urlencoded form data
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Set up session management
+app.use(session({
+    secret: 'your_secret_key', 
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: 'mongodb://localhost:27017/food-order',
+        collectionName: 'sessions'
+    }),
+    cookie: { maxAge: 180 * 60 * 1000 } // 3 hours
+}));
+
+app.use((req, res, next) => {
+  res.locals.successMessage = req.session.successMessage;
+  res.locals.errorMessage = req.session.errorMessage;
+  delete req.session.successMessage;
+  delete req.session.errorMessage;
+  next();
+});
+
 
 // Session configuration
 app.use(

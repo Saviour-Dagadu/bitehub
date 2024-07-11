@@ -125,12 +125,11 @@ router.get('/', isAuthenticated, async (req, res) => {
     }
 });
 
-// Manage-category route
+// Example for manage-category route
 router.get('/category', isAuthenticated, async (req, res) => {
     try {
         const allCategory = await Category.find();
         const loggedInCategory = await Category.findById(req.session.categoryID);
-        const admin = await Admin.findById(req.session.adminID); // Fetch admin data
 
         // You may need to fetch other data or perform operations specific to this route
         if (!allCategory) {
@@ -141,9 +140,9 @@ router.get('/category', isAuthenticated, async (req, res) => {
             title: 'Manage Category Page',
             allCategory: allCategory,
             loggedInCategory: loggedInCategory,
-            category: loggedInCategory,
-            admin: admin // Pass admin data to the template
+            category: loggedInCategory, // Pass loggedInCategory to ensure it's defined in the header.ejs template
         });
+        res.render('manage-category', { title: 'Manage Categories', admin: admin });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
@@ -318,19 +317,6 @@ router.get('/delete/:id', async (req, res) => {
     } catch (err) {
         console.error('Error deleting admin:', err);
         res.redirect('/admin?error=Failed to delete admin!');
-    }
-});
-
-// Get all categories route
-router.get("/manage-category", async (req, res) => {
-    try {
-        const category = await category.find();
-        res.render('manage-category', {
-            title: 'Manage category Page',
-            category: category,
-        });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
     }
 });
 

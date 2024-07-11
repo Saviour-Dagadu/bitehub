@@ -27,7 +27,7 @@
                             <% allCategory.forEach((category, index) => { %>
                                 <tr class="align-middle">
                                     <td><%= index + 1 %></td>
-                                    <td><img src="/uploads/category/ <%= category.image %>" width="50" class="img-thumbnail" alt="<%= category.name %>"></td>
+                                    <td><img src="/uploads/<%= category.image %>" width="50" class="img-thumbnail" alt="<%= category.name %>"></td>
                                     <td><%= category.name %></td>
                                     <td><%= category.details %></td>
                                     <td><%= category.featured %></td>

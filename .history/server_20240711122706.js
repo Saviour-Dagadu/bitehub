@@ -32,15 +32,15 @@ app.use(
     secret: 'my secret key',
     saveUninitialized: true,
     resave: false,
-    cookie: { secure: false }, // Set to true if using HTTPS
   })
 );
 
-
 // Set local variables for response
 app.use((req, res, next) => {
-  res.locals.message = req.session.message;
-  delete req.session.message;
+  res.locals.successMessage = req.session.successMessage;
+  res.locals.errorMessage = req.session.errorMessage;
+  delete req.session.successMessage;
+  delete req.session.errorMessage;
   next();
 });
 

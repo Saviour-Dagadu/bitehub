@@ -1,0 +1,59 @@
+<%- include('layout/header.ejs') %>
+
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-12">
+            <h1>Manage Categories</h1>
+            <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+                <div class="alert alert-success text-center"><%= successMessage %></div>
+            <% } %>
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                <div class="alert alert-danger text-center"><%= errorMessage %></div>
+            <% } %>
+            <div class="mb-3">
+                <a class="btn btn-primary btn-lg" href="/add_category">Add Category</a>
+            </div>
+            <div class="table-responsive">
+                <% if (allCategories && allCategories.length > 0) { %>
+                    <table class="table table-striped text-center my-3">
+                        <thead>
+                            <tr class="table-dark">
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Title</th>
+                                <th>Featured</th>
+                                <th>Active</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% allCategories.forEach((category, index) => { %>
+                                <tr class="align-middle">
+                                    <td><%= index + 1 %></td>
+                                    <td>
+                                        <% if (category.image_name) { %>
+                                            <img src="/uploads/<%= category.image_name %>" width="50" class="img-thumbnail" alt="Category">
+                                        <% } else { %>
+                                            <div class="error">Image is not Added.</div>
+                                        <% } %>
+                                    </td>
+                                    <td><%= category.title %></td>
+                                    <td><%= category.featured %></td>
+                                    <td><%= category.active %></td>
+                                    <td>
+                                        <a href="/update-category/<%= category._id %>" class="text-success"><i class="fas fa-edit fa-lg mx-1"></i></a>
+                                        <a href="/delete-category/<%= category._id %>?image_name=<%= category.image_name %>" class="text-danger"><i class="fas fa-trash fa-lg mx-1"></i></a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <h1 class="text-center text-secondary mt-5">No categories found in the database!</h1>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('layout/footer.ejs') %>

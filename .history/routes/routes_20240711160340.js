@@ -130,7 +130,6 @@ router.get('/category', isAuthenticated, async (req, res) => {
     try {
         const allCategory = await Category.find();
         const loggedInCategory = await Category.findById(req.session.categoryID);
-        const admin = await Admin.findById(req.session.adminID); // Fetch admin data
 
         // You may need to fetch other data or perform operations specific to this route
         if (!allCategory) {
@@ -141,9 +140,10 @@ router.get('/category', isAuthenticated, async (req, res) => {
             title: 'Manage Category Page',
             allCategory: allCategory,
             loggedInCategory: loggedInCategory,
-            category: loggedInCategory,
+            category: loggedInCategory, // Pass loggedInCategory to ensure it's defined in the header.ejs template
             admin: admin // Pass admin data to the template
         });
+        res.render('manage-category', { title: 'Manage Category', admin: admin });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }

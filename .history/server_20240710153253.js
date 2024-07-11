@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const path = require('path');
 const PORT = process.env.PORT || 8000;
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
 
 // Use .env file in config folder
 require('dotenv').config({ path: './config/.env' });
@@ -25,6 +27,15 @@ db.once('open', () => console.log('Connected to the database!'));
 // Middleware for parsing request bodies
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+app.use((req, res, next) => {
+  res.locals.successMessage = req.session.successMessage;
+  res.locals.errorMessage = req.session.errorMessage;
+  delete req.session.successMessage;
+  delete req.session.errorMessage;
+  next();
+});
+
 
 // Session configuration
 app.use(

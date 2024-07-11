@@ -1,0 +1,64 @@
+<%- include('layout/header.ejs') %>
+
+<div class="main-content">
+    <div class="wrapper">
+        <h1>Manage Category</h1>
+        <br /><br />
+
+        <% if (successMessage) { %>
+            <div class="alert alert-success"><%= successMessage %></div>
+        <% } %>
+        <% if (errorMessage) { %>
+            <div class="alert alert-danger"><%= errorMessage %></div>
+        <% } %>
+
+        <br /><br />
+
+        <!-- Button to Add Category -->
+        <a href="/add_category" class="btn btn-primary btn-lg">Add Category</a>
+
+        <br /><br /><br />
+
+        <table class="table table-striped text-center my-3">
+            <thead>
+                <tr>
+                    <th>S.N.</th>
+                    <th>Title</th>
+                    <th>Image</th>
+                    <th>Featured</th>
+                    <th>Active</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (allCategories && allCategories.length > 0) { %>
+                    <% allCategories.forEach((category, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= category.title %></td>
+                            <td>
+                                <% if (category.image) { %>
+                                    <img src="/uploads/<%= category.image %>" width="100px">
+                                <% } else { %>
+                                    <div class="error">Image is not Added</div>
+                                <% } %>
+                            </td>
+                            <td><%= category.featured %></td>
+                            <td><%= category.active %></td>
+                            <td>
+                                <a href="/update-category/<%= category._id %>" class="btn btn-secondary">Update Category</a>
+                                <a href="/delete-category/<%= category._id %>?image=<%= category.image %>" class="btn btn-danger">Delete Category</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6"><div class="error">No Category Added</div></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<%- include('layout/footer.ejs') %>

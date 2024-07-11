@@ -130,7 +130,11 @@ router.get('/category', isAuthenticated, async (req, res) => {
     try {
         const allCategory = await Category.find();
         const loggedInCategory = await Category.findById(req.session.categoryID);
-        const admin = await Admin.findById(req.session.adminID); // Fetch admin data
+        let admin;
+
+        if (req.session.isAdmin) { // Check if the user is logged in as an admin
+            admin = await Admin.findById(req.session.adminID); // Fetch admin data
+        }
 
         // You may need to fetch other data or perform operations specific to this route
         if (!allCategory) {
@@ -148,7 +152,6 @@ router.get('/category', isAuthenticated, async (req, res) => {
         res.status(500).send({ message: err.message });
     }
 });
-
 // Example for manage-order route
 router.get('/order', isAuthenticated, async (req, res) => {
     try {

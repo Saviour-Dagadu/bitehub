@@ -93,23 +93,25 @@ router.get('/logout', (req, res) => {
 router.use(redirectToLogin);
 
 // Manage Admin route.
-router.get('/admin', isAuthenticated, async (req, res) => {
+router.get('/category', isAuthenticated, async (req, res) => {
     try {
-        const allAdmins = await Admin.find();
-        const loggedInAdmin = await Admin.findById(req.session.adminId);
-        
-        if (!allAdmins) {
-            return res.status(404).send({ message: "No admins found." });
+        const allCategory = await Category.find();
+        const loggedInCategory = await Category.findById(req.session.categoryID);
+        const admin = await Admin.findById(req.session.adminID); // Fetch admin data
+
+        // You may need to fetch other data or perform operations specific to this route
+        if (!allCategory) {
+            return res.status(404).send({ message: "No category found." });
         }
         
-        res.render('manage-admin', {
-            title: 'Manage Admin Page',
-            allAdmins: allAdmins,
-            loggedInAdmin: loggedInAdmin,
-            admin: loggedInAdmin, // Pass loggedInAdmin to ensure it's defined in the header.ejs template
+        res.render('manage-category', {
+            title: 'Manage Category Page',
+            allCategory: allCategory,
+            loggedInCategory: loggedInCategory,
+            category: loggedInCategory,
+            admin: admin // Pass admin data to the template
         });
     } catch (err) {
-        console.error('Error fetching admins:', err);
         res.status(500).send({ message: err.message });
     }
 });
@@ -130,7 +132,11 @@ router.get('/category', isAuthenticated, async (req, res) => {
     try {
         const allCategory = await Category.find();
         const loggedInCategory = await Category.findById(req.session.categoryID);
-        const admin = await Admin.findById(req.session.adminID); // Fetch admin data
+        let admin;
+
+        if (req.session.isAdmin) { // Check if the user is logged in as an admin
+            admin = await Admin.findById(req.session.adminID); // Fetch admin data
+        }
 
         // You may need to fetch other data or perform operations specific to this route
         if (!allCategory) {

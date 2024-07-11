@@ -4,9 +4,9 @@ const multer = require('multer');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
-const Admin = require('../models/admin');
-const Category = require('../models/admin');
+const Admin = require('../model/admin');
 const isAuthenticated = require('../middleware/isAuthenticated');
+const Category = require('../model/category');
 
 // Middleware to redirect to login if not authenticated
 const redirectToLogin = (req, res, next) => {
@@ -16,24 +16,6 @@ const redirectToLogin = (req, res, next) => {
     next();
 };
 
-// Middleware to set the admin variable
-router.use((req, res, next) => {
-    res.locals.admin = req.session.admin;
-    next();
-});
-
-// Middleware to set the category variable
-router.use((req, res, next) => {
-    res.locals.category = req.session.category;
-    next();
-});
-
-// Middleware to set the food variable
-router.use((req, res, next) => {
-    res.locals.food = req.session.food;
-    next();
-});
-
 // Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -41,6 +23,7 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + '-' + file.originalname);
+        cb(null, `Food_category_${Date.now()}${path.extname(file.originalname)}`);
     }
 });
 const upload = multer({ storage: storage });
@@ -125,25 +108,12 @@ router.get('/', isAuthenticated, async (req, res) => {
     }
 });
 
-// Manage-category route
+// Example for manage-category route
 router.get('/category', isAuthenticated, async (req, res) => {
     try {
-        const allCategory = await Category.find();
-        const loggedInCategory = await Category.findById(req.session.categoryID);
-        const admin = await Admin.findById(req.session.adminID); // Fetch admin data
-
+        const admin = await Admin.findById(req.session.adminId);
         // You may need to fetch other data or perform operations specific to this route
-        if (!allCategory) {
-            return res.status(404).send({ message: "No category found." });
-        }
-        
-        res.render('manage-category', {
-            title: 'Manage Category Page',
-            allCategory: allCategory,
-            loggedInCategory: loggedInCategory,
-            category: loggedInCategory,
-            admin: admin // Pass admin data to the template
-        });
+        res.render('manage-category', { title: 'Manage Categories', admin: admin });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
@@ -171,20 +141,163 @@ router.get('/food', isAuthenticated, async (req, res) => {
     }
 });
 
+// Route to render the manage categories page
+router.get('/manage-category', async (req, res) => {
+    try {
+        const allCategories = await Category.find();
+        res.render('manage-category', {
+            title: 'Manage Categories',
+            allCategories,
+            successMessage: req.session.successMessage,
+            errorMessage: req.session.errorMessage
+        });
+
+        // Clear messages after rendering
+        req.session.successMessage = null;
+        req.session.errorMessage = null;
+    } catch (err) {
+        console.error(err);
+        req.session.errorMessage = 'Failed to fetch categories.';
+        res.redirect('/');
+    }
+});
+
+// Route to delete a category
+router.get('/delete-category/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const category = await Category.findById(id);
+        if (category.image_name) {
+            const fs = require('fs');
+            const imagePath = `public/uploads/${category.image_name}`;
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        }
+        await Category.findByIdAndDelete(id);
+        req.session.successMessage = 'Category deleted successfully.';
+    } catch (err) {
+        console.error(err);
+        req.session.errorMessage = 'Failed to delete category.';
+    } finally {
+        res.redirect('/manage-category');
+    }
+});
+
+// Route to update a category (Add your update logic here)
+// Example:
+// router.post('/update-category/:id', async (req, res) => {
+//     // Update logic here
+// });
+
+
+// Route to render the Add Category page
+router.get('/add-category', (req, res) => {
+    res.render('add-category', {
+        title: 'Add Category',
+        successMessage: req.session.successMessage,
+        errorMessage: req.session.errorMessage
+    });
+});
+
+// Route to handle the Add Category form submission
+router.post('/add-category', upload.single('image'), async (req, res) => {
+    try {
+        const { title, featured, active } = req.body;
+        let imageName = '';
+
+        if (req.file) {
+            imageName = req.file.filename;
+        }
+
+        const newCategory = new Category({
+            title,
+            image_name: imageName,
+            featured: featured || 'No',
+            active: active || 'No'
+        });
+
+        await newCategory.save();
+        
+        req.session.successMessage = 'Category Added Successfully.';
+        res.redirect('/manage-category');
+    } catch (err) {
+        console.error(err);
+        req.session.errorMessage = 'Failed to Add Category.';
+        res.redirect('/add-category');
+    }
+});
+
+// Route to render the update category page
+router.get('/update-category/:id', async (req, res) => {
+    try {
+        const category = await Category.findById(req.params.id);
+        if (!category) {
+            req.session.errorMessage = 'Category not found.';
+            return res.redirect('/manage-category');
+        }
+        res.render('update-category', {
+            title: 'Update Category',
+            category
+        });
+    } catch (err) {
+        console.error(err);
+        req.session.errorMessage = 'Failed to fetch category details.';
+        res.redirect('/manage-category');
+    }
+});
+
+// Route to handle category update
+router.post('/update-category/:id', async (req, res) => {
+    const { title, featured, active } = req.body;
+    const { id } = req.params;
+    let image_name = "";
+
+    try {
+        const category = await Category.findById(id);
+        if (!category) {
+            req.session.errorMessage = 'Category not found.';
+            return res.redirect('/manage-category');
+        }
+
+        if (req.files && req.files.image) {
+            const image = req.files.image;
+            const ext = image.name.split('.').pop();
+            image_name = `Food_category_${Date.now()}.${ext}`;
+            const uploadPath = `public/uploads/${image_name}`;
+
+            await image.mv(uploadPath);
+
+            // Delete old image if a new one is uploaded
+            if (category.image_name) {
+                const fs = require('fs');
+                const oldImagePath = `public/uploads/${category.image_name}`;
+                if (fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+            }
+        } else {
+            image_name = category.image_name;
+        }
+
+        category.title = title;
+        category.featured = featured;
+        category.active = active;
+        category.image_name = image_name;
+
+        await category.save();
+        req.session.successMessage = 'Category updated successfully.';
+    } catch (err) {
+        console.error(err);
+        req.session.errorMessage = 'Failed to update category.';
+    } finally {
+        res.redirect('/manage-category');
+    }
+});
 
 // Add admin form route
 router.get('/add_admin', (req, res) => {
     res.render('add_admin', { title: 'Add New Admin' });
-});
-
-// Add category form route
-router.get('/add_category', (req, res) => {
-    res.render('add_category', { title: 'Add New Category' });
-});
-
-// Add food form route
-router.get('/add_food', (req, res) => {
-    res.render('add_food', { title: 'Add New Foods' });
 });
 
 // Get all admin route
@@ -318,19 +431,6 @@ router.get('/delete/:id', async (req, res) => {
     } catch (err) {
         console.error('Error deleting admin:', err);
         res.redirect('/admin?error=Failed to delete admin!');
-    }
-});
-
-// Get all categories route
-router.get("/manage-category", async (req, res) => {
-    try {
-        const category = await category.find();
-        res.render('manage-category', {
-            title: 'Manage category Page',
-            category: category,
-        });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
     }
 });
 

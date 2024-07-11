@@ -7,6 +7,8 @@ const fs = require('fs');
 const Admin = require('../models/admin');
 const Category = require('../models/admin');
 const isAuthenticated = require('../middleware/isAuthenticated');
+const category = require('../models/category');
+const category = require('../models/category');
 
 // Middleware to redirect to login if not authenticated
 const redirectToLogin = (req, res, next) => {
@@ -130,7 +132,6 @@ router.get('/category', isAuthenticated, async (req, res) => {
     try {
         const allCategory = await Category.find();
         const loggedInCategory = await Category.findById(req.session.categoryID);
-        const admin = await Admin.findById(req.session.adminID); // Fetch admin data
 
         // You may need to fetch other data or perform operations specific to this route
         if (!allCategory) {
@@ -141,9 +142,9 @@ router.get('/category', isAuthenticated, async (req, res) => {
             title: 'Manage Category Page',
             allCategory: allCategory,
             loggedInCategory: loggedInCategory,
-            category: loggedInCategory,
-            admin: admin // Pass admin data to the template
+            category: loggedInCategory, // Pass loggedInCategory to ensure it's defined in the header.ejs template
         });
+        res.render('manage-category', { title: 'Manage Categories', category: category });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }

@@ -32,10 +32,8 @@ app.use(
     secret: 'my secret key',
     saveUninitialized: true,
     resave: false,
-    cookie: { secure: false }, // Set to true if using HTTPS
   })
 );
-
 
 // Set local variables for response
 app.use((req, res, next) => {

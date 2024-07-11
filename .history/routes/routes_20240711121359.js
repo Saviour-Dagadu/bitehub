@@ -4,8 +4,7 @@ const multer = require('multer');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
-const Admin = require('../models/admin');
-const Category = require('../models/admin');
+const Admin = require('../model/admin');
 const isAuthenticated = require('../middleware/isAuthenticated');
 
 // Middleware to redirect to login if not authenticated
@@ -15,24 +14,6 @@ const redirectToLogin = (req, res, next) => {
     }
     next();
 };
-
-// Middleware to set the admin variable
-router.use((req, res, next) => {
-    res.locals.admin = req.session.admin;
-    next();
-});
-
-// Middleware to set the category variable
-router.use((req, res, next) => {
-    res.locals.category = req.session.category;
-    next();
-});
-
-// Middleware to set the food variable
-router.use((req, res, next) => {
-    res.locals.food = req.session.food;
-    next();
-});
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -125,25 +106,12 @@ router.get('/', isAuthenticated, async (req, res) => {
     }
 });
 
-// Manage-category route
+// Example for manage-category route
 router.get('/category', isAuthenticated, async (req, res) => {
     try {
-        const allCategory = await Category.find();
-        const loggedInCategory = await Category.findById(req.session.categoryID);
-        const admin = await Admin.findById(req.session.adminID); // Fetch admin data
-
+        const admin = await Admin.findById(req.session.adminId);
         // You may need to fetch other data or perform operations specific to this route
-        if (!allCategory) {
-            return res.status(404).send({ message: "No category found." });
-        }
-        
-        res.render('manage-category', {
-            title: 'Manage Category Page',
-            allCategory: allCategory,
-            loggedInCategory: loggedInCategory,
-            category: loggedInCategory,
-            admin: admin // Pass admin data to the template
-        });
+        res.render('manage-category', { title: 'Manage Categories', admin: admin });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
@@ -175,16 +143,6 @@ router.get('/food', isAuthenticated, async (req, res) => {
 // Add admin form route
 router.get('/add_admin', (req, res) => {
     res.render('add_admin', { title: 'Add New Admin' });
-});
-
-// Add category form route
-router.get('/add_category', (req, res) => {
-    res.render('add_category', { title: 'Add New Category' });
-});
-
-// Add food form route
-router.get('/add_food', (req, res) => {
-    res.render('add_food', { title: 'Add New Foods' });
 });
 
 // Get all admin route
@@ -318,19 +276,6 @@ router.get('/delete/:id', async (req, res) => {
     } catch (err) {
         console.error('Error deleting admin:', err);
         res.redirect('/admin?error=Failed to delete admin!');
-    }
-});
-
-// Get all categories route
-router.get("/manage-category", async (req, res) => {
-    try {
-        const category = await category.find();
-        res.render('manage-category', {
-            title: 'Manage category Page',
-            category: category,
-        });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
     }
 });
 
