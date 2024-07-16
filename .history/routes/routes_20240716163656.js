@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const Admin = require('../models/admin');
 const Category = require('../models/category');
-const Food = require('../models/food');
+const Category = require('../models/food');
 const isAuthenticated = require('../middleware/isAuthenticated');
 
 // Middleware to redirect to login if not authenticated

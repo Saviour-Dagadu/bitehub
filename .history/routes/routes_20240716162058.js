@@ -6,7 +6,6 @@ const path = require('path');
 const fs = require('fs');
 const Admin = require('../models/admin');
 const Category = require('../models/category');
-const Food = require('../models/food');
 const isAuthenticated = require('../middleware/isAuthenticated');
 
 // Middleware to redirect to login if not authenticated
@@ -156,7 +155,7 @@ router.get('/', isAuthenticated, async (req, res) => {
     }
 });
 
-// Manage-order route
+// Example for manage-order route
 router.get('/order', isAuthenticated, async (req, res) => {
     try {
         const admin = await Admin.findById(req.session.adminId);
@@ -167,33 +166,17 @@ router.get('/order', isAuthenticated, async (req, res) => {
     }
 });
 
-// Manage-food route
+// Example for manage-food route
 router.get('/food', isAuthenticated, async (req, res) => {
     try {
-        const allFoods = await Food.find();
-        const loggedInFood = await Food.findById(req.session.foodID);
-        
-        // Fetch admin data for welcome user massage.
-        const admin = await Admin.findById(req.session.adminID);
-        const loggedInAdmin = await Admin.findById(req.session.adminId);
-
-        // Ensure allFoods is properly handled if no foods found
-        if (!allFoods) {
-            return res.status(404).send({ message: "No food found." });
-        }
-
-        // Render the page with necessary variables
-        res.render('manage-food', {
-            title: 'Manage Foods Page',
-            allFoods: allFoods,
-            loggedInFood: loggedInFood,
-            foods: loggedInFood,
-            admin: loggedInAdmin, // Pass admin data to the template
-        });
+        const admin = await Admin.findById(req.session.adminId);
+        // You may need to fetch other data or perform operations specific to this route
+        res.render('manage-food', { title: 'Manage Foods', admin: admin });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
 });
+
 
 // Add admin form route
 router.get('/add_admin', (req, res) => {
@@ -351,19 +334,6 @@ router.get("/category", async (req, res) => {
         res.render('manage-category', {
             title: 'Manage categories',
             category: categories,
-        });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
-// Get all admin route
-router.get("/food", async (req, res) => {
-    try {
-        const admin = await Admin.find();
-        res.render('manage-food', {
-            title: 'Manage Foods Page',
-            admin: admin,
         });
     } catch (err) {
         res.status(500).send({ message: err.message });
