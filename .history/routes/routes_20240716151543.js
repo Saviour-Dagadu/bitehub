@@ -28,7 +28,6 @@ router.use((req, res, next) => {
     next();
 });
 
-
 // Middleware to set the food variable
 router.use((req, res, next) => {
     res.locals.food = req.session.food;
@@ -115,41 +114,36 @@ router.get('/admin', isAuthenticated, async (req, res) => {
     }
 });
 
-// Manage-category route
-router.get('/category', isAuthenticated, async (req, res) => {
-    try {
-        const allCategory = await Category.find();
-        const loggedInCategory = await Category.findById(req.session.categoryID);
-        
-        // Fetch admin data for welcome user massage.
-        const admin = await Admin.findById(req.session.adminID);
-        const loggedInAdmin = await Admin.findById(req.session.adminId);
-
-        // Ensure allCategory is properly handled if no categories found
-        if (!allCategory) {
-            return res.status(404).send({ message: "No category found." });
-        }
-
-        // Render the page with necessary variables
-        res.render('manage-category', {
-            title: 'Manage Category Page',
-            allCategory: allCategory,
-            loggedInCategory: loggedInCategory,
-            category: loggedInCategory,
-            admin: loggedInAdmin, // Pass admin data to the template
-        });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
-
 // Dashboard route or Home route
 router.get('/', isAuthenticated, async (req, res) => {
     try {
         const admin = await Admin.findById(req.session.adminId);
         // You may need to fetch other data or perform operations specific to this route
         res.render('index', { title: 'Darshboard', admin: admin });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+});
+
+// Manage-category route
+router.get('/category', isAuthenticated, async (req, res) => {
+    try {
+        const allCategory = await Category.find();
+        const loggedInCategory = await Category.findById(req.session.categoryID);
+        const admin = await Admin.findById(req.session.adminID); // Fetch admin data
+
+        // You may need to fetch other data or perform operations specific to this route
+        if (!allCategory) {
+            return res.status(404).send({ message: "No category found." });
+        }
+        
+        res.render('manage-category', {
+            title: 'Manage Category Page',
+            allCategory: allCategory,
+            loggedInCategory: loggedInCategory,
+            category: loggedInCategory,
+            admin: admin // Pass admin data to the template
+        });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
@@ -328,11 +322,11 @@ router.get('/delete/:id', async (req, res) => {
 });
 
 // Get all categories route
-router.get("/category", async (req, res) => {
+router.get("/manage-category", async (req, res) => {
     try {
         const category = await Category.find();
         res.render('manage-category', {
-            title: 'Manage categories',
+            title: 'Manage category Page',
             category: categories,
         });
     } catch (err) {

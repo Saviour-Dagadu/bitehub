@@ -116,33 +116,20 @@ router.get('/admin', isAuthenticated, async (req, res) => {
 });
 
 // Manage-category route
-router.get('/category', isAuthenticated, async (req, res) => {
+router.get('/manage-category', async (req, res) => {
     try {
-        const allCategory = await Category.find();
-        const loggedInCategory = await Category.findById(req.session.categoryID);
-        
-        // Fetch admin data for welcome user massage.
-        const admin = await Admin.findById(req.session.adminID);
-        const loggedInAdmin = await Admin.findById(req.session.adminId);
-
-        // Ensure allCategory is properly handled if no categories found
-        if (!allCategory) {
-            return res.status(404).send({ message: "No category found." });
-        }
-
-        // Render the page with necessary variables
+        const allCategory = await Category.find(); // Fetch all categories from your database
         res.render('manage-category', {
             title: 'Manage Category Page',
-            allCategory: allCategory,
-            loggedInCategory: loggedInCategory,
-            category: loggedInCategory,
-            admin: loggedInAdmin, // Pass admin data to the template
+            allCategory: allCategory, // Pass allCategory to the template
+            loggedInCategory: res.locals.category, // Pass loggedInCategory if needed
+            admin: req.session.admin // Pass admin data if needed
         });
     } catch (err) {
-        res.status(500).send({ message: err.message });
+        console.error('Error fetching categories:', err);
+        res.redirect('/'); // Handle error as per your application's logic
     }
 });
-
 
 // Dashboard route or Home route
 router.get('/', isAuthenticated, async (req, res) => {

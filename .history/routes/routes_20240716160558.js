@@ -121,7 +121,7 @@ router.get('/category', isAuthenticated, async (req, res) => {
         const allCategory = await Category.find();
         const loggedInCategory = await Category.findById(req.session.categoryID);
         
-        // Fetch admin data for welcome user massage.
+        // Fetch admin data (you already fetched this above)
         const admin = await Admin.findById(req.session.adminID);
         const loggedInAdmin = await Admin.findById(req.session.adminId);
 

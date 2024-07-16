@@ -47,9 +47,8 @@
         </div>
     </div>
 </div>
-
 <script>
-  function showSuccessMessage(message) {
+    function showSuccessMessage(message) {
     const successDiv = document.getElementById('successMessage');
     successDiv.textContent = message;
     successDiv.style.display = 'block';
@@ -80,5 +79,4 @@
     showErrorMessage(errorMessage);
   }
 </script>
-
 <%- include('layout/footer.ejs')  %>

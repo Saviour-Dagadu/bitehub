@@ -28,13 +28,6 @@ router.use((req, res, next) => {
     next();
 });
 
-
-// Middleware to set the food variable
-router.use((req, res, next) => {
-    res.locals.food = req.session.food;
-    next();
-});
-
 // Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -58,15 +51,11 @@ router.post('/login', async (req, res) => {
     try {
         const admin = await Admin.findOne({ username });
 
-        console.log('Admin found:', admin);
-
         if (!admin) {
-            console.log('Admin not found');
             return res.render('login', { title: 'Login', message: 'Invalid username or password' });
         }
 
         const isPasswordValid = await bcrypt.compare(password, admin.password);
-        console.log('Password valid:', isPasswordValid);
 
         if (isPasswordValid) {
             req.session.adminId = admin._id;
@@ -94,7 +83,7 @@ router.get('/logout', (req, res) => {
 router.use(redirectToLogin);
 
 // Manage Admin route.
-router.get('/admin', isAuthenticated, async (req, res) => {
+router.get('/admin', async (req, res) => {
     try {
         const allAdmins = await Admin.find();
         const loggedInAdmin = await Admin.findById(req.session.adminId);
@@ -116,67 +105,26 @@ router.get('/admin', isAuthenticated, async (req, res) => {
 });
 
 // Manage-category route
-router.get('/category', isAuthenticated, async (req, res) => {
+router.get('/manage-category', async (req, res) => {
     try {
-        const allCategory = await Category.find();
-        const loggedInCategory = await Category.findById(req.session.categoryID);
+        const allCategories = await Category.find();
+        const loggedInAdmin = await Admin.findById(req.session.adminId); // Assuming admin ID is used for authorization
         
-        // Fetch admin data for welcome user massage.
-        const admin = await Admin.findById(req.session.adminID);
-        const loggedInAdmin = await Admin.findById(req.session.adminId);
-
-        // Ensure allCategory is properly handled if no categories found
-        if (!allCategory) {
-            return res.status(404).send({ message: "No category found." });
+        if (!allCategories) {
+            return res.status(404).send({ message: "No categories found." });
         }
-
-        // Render the page with necessary variables
+        
         res.render('manage-category', {
             title: 'Manage Category Page',
-            allCategory: allCategory,
-            loggedInCategory: loggedInCategory,
-            category: loggedInCategory,
-            admin: loggedInAdmin, // Pass admin data to the template
+            allCategories: allCategories,
+            loggedInAdmin: loggedInAdmin,
+            admin: loggedInAdmin // Pass admin data to the template
         });
     } catch (err) {
+        console.error('Error fetching categories:', err);
         res.status(500).send({ message: err.message });
     }
 });
-
-
-// Dashboard route or Home route
-router.get('/', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('index', { title: 'Darshboard', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
-// Example for manage-order route
-router.get('/order', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('manage-order', { title: 'Manage Orders', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
-// Example for manage-food route
-router.get('/food', isAuthenticated, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.session.adminId);
-        // You may need to fetch other data or perform operations specific to this route
-        res.render('manage-food', { title: 'Manage Foods', admin: admin });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
 
 // Add admin form route
 router.get('/add_admin', (req, res) => {
@@ -186,24 +134,6 @@ router.get('/add_admin', (req, res) => {
 // Add category form route
 router.get('/add_category', (req, res) => {
     res.render('add_category', { title: 'Add New Category' });
-});
-
-// Add food form route
-router.get('/add_food', (req, res) => {
-    res.render('add_food', { title: 'Add New Foods' });
-});
-
-// Get all admin route
-router.get("/admin", async (req, res) => {
-    try {
-        const admin = await Admin.find();
-        res.render('manage-admin', {
-            title: 'Manage Admin Page',
-            admin: admin,
-        });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
 });
 
 // Route to handle adding an admin
@@ -324,19 +254,6 @@ router.get('/delete/:id', async (req, res) => {
     } catch (err) {
         console.error('Error deleting admin:', err);
         res.redirect('/admin?error=Failed to delete admin!');
-    }
-});
-
-// Get all categories route
-router.get("/category", async (req, res) => {
-    try {
-        const category = await Category.find();
-        res.render('manage-category', {
-            title: 'Manage categories',
-            category: categories,
-        });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
     }
 });
 

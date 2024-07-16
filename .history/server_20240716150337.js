@@ -16,13 +16,16 @@ app.use(express.static('public'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Database connection
-mongoose.connect(process.env.DB_URI);
+mongoose.connect(process.env.DB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+});
 
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', function() {
-  console.log('Connected to MongoDB');
-});
+db.on('error', (error) => console.error('MongoDB connection error:', error));
+db.once('open', () => console.log('Connected to the database!'));
 
 // Middleware for parsing request bodies
 app.use(express.urlencoded({ extended: false }));
@@ -34,7 +37,7 @@ app.use(
     secret: 'my secret key',
     saveUninitialized: true,
     resave: false,
-    cookie: { secure: false } // Set to true if using HTTPS
+    cookie: { secure: false }, // Set to true if using HTTPS
   })
 );
 

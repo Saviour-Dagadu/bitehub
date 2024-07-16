@@ -120,10 +120,10 @@ router.get('/category', isAuthenticated, async (req, res) => {
     try {
         const allCategory = await Category.find();
         const loggedInCategory = await Category.findById(req.session.categoryID);
-        
-        // Fetch admin data for welcome user massage.
-        const admin = await Admin.findById(req.session.adminID);
         const loggedInAdmin = await Admin.findById(req.session.adminId);
+        
+        // Fetch admin data (you already fetched this above)
+        const admin = await Admin.findById(req.session.adminID);
 
         // Ensure allCategory is properly handled if no categories found
         if (!allCategory) {
@@ -136,7 +136,7 @@ router.get('/category', isAuthenticated, async (req, res) => {
             allCategory: allCategory,
             loggedInCategory: loggedInCategory,
             category: loggedInCategory,
-            admin: loggedInAdmin, // Pass admin data to the template
+            admin: admin // Pass admin data to the template
         });
     } catch (err) {
         res.status(500).send({ message: err.message });
