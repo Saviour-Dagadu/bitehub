@@ -7,9 +7,7 @@ const fs = require('fs');
 const Admin = require('../models/admin');
 const Category = require('../models/category');
 const Food = require('../models/food');
-const Orders = require('../models/order');
 const isAuthenticated = require('../middleware/isAuthenticated');
-
 
 // Middleware to redirect to login if not authenticated
 const redirectToLogin = (req, res, next) => {
@@ -37,13 +35,6 @@ router.use((req, res, next) => {
     res.locals.food = req.session.food;
     next();
 });
-
-// Middleware to set the order variable
-router.use((req, res, next) => {
-    res.locals.order = req.session.order;
-    next();
-});
-
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -168,24 +159,24 @@ router.get('/', isAuthenticated, async (req, res) => {
 // Manage-order route
 router.get('/order', isAuthenticated, async (req, res) => {
     try {
-        const allOrders = await Orders.find();
-        const loggedInOrders = await Orders.findById(req.session.orderID);
+        const allOrders = await Order.find();
+        const loggedInCategory = await Category.findById(req.session.categoryID);
         
         // Fetch admin data for welcome user massage.
         const admin = await Admin.findById(req.session.adminID);
         const loggedInAdmin = await Admin.findById(req.session.adminId);
 
         // Ensure allCategory is properly handled if no categories found
-        if (!allOrders) {
-            return res.status(404).send({ message: "No Orders found." });
+        if (!allCategory) {
+            return res.status(404).send({ message: "No category found." });
         }
 
         // Render the page with necessary variables
-        res.render('manage-order', {
-            title: 'Manage Order Page',
-            allOrders: allOrders,
-            loggedInOrders: loggedInOrders,
-            order: loggedInOrders,
+        res.render('manage-category', {
+            title: 'Manage Category Page',
+            allCategory: allCategory,
+            loggedInCategory: loggedInCategory,
+            category: loggedInCategory,
             admin: loggedInAdmin, // Pass admin data to the template
         });
     } catch (err) {
