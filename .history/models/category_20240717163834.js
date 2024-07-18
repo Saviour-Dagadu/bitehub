@@ -8,7 +8,7 @@ const CategorySchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        required: true // Make image a required field
+        required: true // Make image_name a required field
     },
     featured: {
         type: String,

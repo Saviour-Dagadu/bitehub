@@ -1,44 +1,45 @@
 <%- include('layout/header.ejs')  %>
 
-<div class="class container">
-    <div class="class row">
+<div class="class container text-center">
+    <div class="class row text-center">
         <div class="class col-lg-12">
-            <h1>Manage Foods</h1>
+            <h1>Manage Categories of Foods</h1>
             <div id="successMessage" class="alert alert-success text-center" style="display: none;"></div>
             <div id="errorMessage" class="alert alert-danger text-center" style="display: none;"></div>
             <div class="mb-3">
-                <a class="btn btn-primary btn-lg" href="/add_food">Add Food</a>
+                <a class="btn btn-primary btn-lg" href="/add_category">Add category</a>
             </div>
-            <div class="table-responsive">
-                <% if (allFoods.length > 0) { %>
+            <div class="table-responsive text-center">
+                <% if (allCategory.length > 0) { %>
                     <table class="table table-striped text-center my-3">
                         <thead> 
                             <tr class="table-dark">
                                 <th>ID</th>
+                                <th>Category Title</th>
                                 <th>Image</th>
-                                <th>Food Name</th>
-                                <th>Details</th>
-                                <th>Price</th>
+                                <th>Featured</th>
+                                <th>Active</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <% allFoods.forEach((food, index) => { %>
+                            <% allCategory.forEach((category, index) => { %>
                                 <tr class="align-middle">
                                     <td><%= index + 1 %></td>
-                                    <td><img src="/uploads/<%= food.image %>" width="50" class="img-thumbnail" alt="<%= food.name %>"></td>
-                                    <td><%= food.name %></td>
-                                    <td><%= food.details %></td>
-                                    <td><%= food.price %></td>
+                                    <td><%= category.title %></td>
+                                    <td><img src="/uploads/category/<%= category.image %>" width="50" class="img-thumbnail" alt="<%= category.title %>"></td>
+                                    <td><%= category.featured %></td>
+                                    <td><%= category.active %></td>
                                     <td>
-                                        <a href="/edit/<%= food._id %>" class="text-success"><i class="fas fa-edit fa-lg mx-1"></i></a>
-                                        <a href="/delete/<%= food._id %>" class="text-danger"><i class="fas fa-trash fa-lg mx-1"></i></a>
+                                        <a href="/edit/<%= category._id %>" class="text-success"><i class="fas fa-edit fa-lg mx-1"></i></a>
+                                        <a href="/delete/<%= category._id %>" class="text-danger"><i class="fas fa-trash fa-lg mx-1"></i></a>
                                     </td>
                                 </tr>
                             <% }) %>
                     </tbody>
                   </table>
                 <% } else { %>
-                  <h1 class="text-center text-secondary mt-5">No food found in the database!</h1>
+                  <h1 class="text-center text-secondary mt-5">No category found in the database!</h1>
                 <% } %>
               </div>
         </div>

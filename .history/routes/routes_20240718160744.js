@@ -332,6 +332,7 @@ router.get('/delete/:id', async (req, res) => {
             const imagePath = path.join(__dirname, '..', 'uploads', admin.image);
             if (fs.existsSync(imagePath)) {
                 fs.unlinkSync(imagePath);
+                console.log('Image deleted successfully.');
             } else {
                 console.log('Image not found:', imagePath);
             }
@@ -374,6 +375,10 @@ router.get('/category', isAuthenticated, async (req, res) => {
 
 // Add category route
 router.post('/add-category', upload.single('image'), async (req, res) => {
+    console.log('POST /add-category hit');
+    console.log('Request body:', req.body);
+    console.log('File:', req.file);
+    
     try {
         const { body, file } = req;
 
@@ -389,7 +394,7 @@ router.post('/add-category', upload.single('image'), async (req, res) => {
         });
 
         await newCategory.save();
-        res.redirect('/category?success=Category added successfully!');
+        res.redirect('/categories?success=Category added successfully!');
     } catch (err) {
         console.error('Error adding category:', err);
         res.status(500).send({ message: 'Failed to add category.' });

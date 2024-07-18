@@ -49,14 +49,13 @@ router.use((req, res, next) => {
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
+    destination: function (req, file, cb) {
         cb(null, 'uploads/');
     },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);
     }
 });
-
 const upload = multer({ storage: storage });
 
 // Route to render login page
@@ -332,6 +331,7 @@ router.get('/delete/:id', async (req, res) => {
             const imagePath = path.join(__dirname, '..', 'uploads', admin.image);
             if (fs.existsSync(imagePath)) {
                 fs.unlinkSync(imagePath);
+                console.log('Image deleted successfully.');
             } else {
                 console.log('Image not found:', imagePath);
             }
@@ -377,26 +377,39 @@ router.post('/add-category', upload.single('image'), async (req, res) => {
     try {
         const { body, file } = req;
 
+        // Check if title is empty
+        if (!body.title) {
+            return res.status(400).send({ message: "Title is required." });
+        }
+
+        // Check if image is uploaded
         if (!file) {
             return res.status(400).send({ message: "Image is required." });
         }
 
+        // Check if featured and active fields are selected
+        if (!body.featured || !body.active) {
+            return res.status(400).send({ message: "Please select featured and active options." });
+        }
+
+        // Create a new category
         const newCategory = new Category({
             title: body.title,
-            image: file.filename,
+            image: file.filename, // Store only the filename
             featured: body.featured,
-            active: body.active
+            active: body.active,
         });
 
+        // Save the category
         await newCategory.save();
+
+        // Redirect to the manage-category page with success message
         res.redirect('/category?success=Category added successfully!');
     } catch (err) {
         console.error('Error adding category:', err);
         res.status(500).send({ message: 'Failed to add category.' });
     }
 });
-
-
 
 // Get all food route
 router.get("/food", async (req, res) => {

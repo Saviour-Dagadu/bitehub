@@ -6,9 +6,9 @@ const CategorySchema = new mongoose.Schema({
         required: true,
         trim: true // Remove leading and trailing whitespace
     },
-    image: {
+    image_name: {
         type: String,
-        required: true // Make image a required field
+        required: true // Make image_name a required field
     },
     featured: {
         type: String,

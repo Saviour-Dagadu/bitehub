@@ -332,6 +332,7 @@ router.get('/delete/:id', async (req, res) => {
             const imagePath = path.join(__dirname, '..', 'uploads', admin.image);
             if (fs.existsSync(imagePath)) {
                 fs.unlinkSync(imagePath);
+                console.log('Image deleted successfully.');
             } else {
                 console.log('Image not found:', imagePath);
             }
