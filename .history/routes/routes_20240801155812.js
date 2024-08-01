@@ -443,7 +443,7 @@ router.post('/update_category/:id', upload.single('image'), async (req, res) => 
 });
 
 // Route to handle deleting a category
-router.get('/delete_category/:id', async (req, res) => {
+router.get('/delete_cat/:id', async (req, res) => {
     try {
         const id = req.params.id;
         const category = await Category.findByIdAndDelete(id);

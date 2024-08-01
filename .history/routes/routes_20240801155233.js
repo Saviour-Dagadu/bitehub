@@ -395,14 +395,17 @@ router.post('/add-category', upload.single('image'), async (req, res) => {
 });
 
 // Edit Category route
-router.get('/edit_category/:id', async (req, res) => {
+router.get('/edit_cat/:id', async (req, res) => {
     try {
-        const cat = await Category.findById(req.params.id);
-        // Use 'cat' instead of 'category' in this scope
-        res.render('edit_category', {
-            title: 'Edit Category',
-            category: cat,
-        });
+        const category = await category.findById(req.params.id);
+        if (category) {
+            res.render('edit_category', {
+                title: 'Edit Category',
+                category: category,
+            });
+        } else {
+            res.redirect('/category');
+        }
     } catch (err) {
         console.error('Error editing category:', err);
         res.redirect('/category');
@@ -410,7 +413,7 @@ router.get('/edit_category/:id', async (req, res) => {
 });
 
 // Route to handle updating category
-router.post('/update_category/:id', upload.single('image'), async (req, res) => {
+router.post('/update_cat/:id', upload.single('image'), async (req, res) => {
     try {
         const { body, file, params } = req;
 
@@ -443,7 +446,7 @@ router.post('/update_category/:id', upload.single('image'), async (req, res) => 
 });
 
 // Route to handle deleting a category
-router.get('/delete_category/:id', async (req, res) => {
+router.get('/delete_cat/:id', async (req, res) => {
     try {
         const id = req.params.id;
         const category = await Category.findByIdAndDelete(id);

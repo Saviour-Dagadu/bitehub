@@ -9,6 +9,9 @@ const Category = require('../models/category');
 const Food = require('../models/food');
 const Orders = require('../models/order');
 const isAuthenticated = require('../middleware/isAuthenticated');
+const order = require('../models/order');
+const food = require('../models/food');
+const category = require('../models/category');
 
 
 // Middleware to redirect to login if not authenticated
@@ -395,14 +398,17 @@ router.post('/add-category', upload.single('image'), async (req, res) => {
 });
 
 // Edit Category route
-router.get('/edit_category/:id', async (req, res) => {
+router.get('/edit_categories/:id', async (req, res) => {
     try {
-        const cat = await Category.findById(req.params.id);
-        // Use 'cat' instead of 'category' in this scope
-        res.render('edit_category', {
-            title: 'Edit Category',
-            category: cat,
-        });
+        const category = await category.findById(req.params.id);
+        if (category) {
+            res.render('edit_category', {
+                title: 'Edit Category',
+                category: category,
+            });
+        } else {
+            res.redirect('/category');
+        }
     } catch (err) {
         console.error('Error editing category:', err);
         res.redirect('/category');
@@ -420,7 +426,7 @@ router.post('/update_category/:id', upload.single('image'), async (req, res) => 
             return res.redirect('/add_category');
         }
 
-        // Update category fields
+        // Update admin fields
         category.title = body.title;
         category.featured = body.featured;
         category.active = body.active;
