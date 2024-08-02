@@ -204,11 +204,6 @@ router.get('/add_category', (req, res) => {
     res.render('add_category', { title: 'Add New Category' });
 });
 
-// Add food form route
-router.get('/add_food', (req, res) => {
-    res.render('add_food', { title: 'Add New Foods' });
-});
-
 // Get all admin route
 router.get("/admin", async (req, res) => {
     try {
@@ -485,114 +480,38 @@ router.get("/food", async (req, res) => {
 // Route to display the add food form
 router.get('/add_food', async (req, res) => {
     try {
-        const food = await Food.find();
-        console.log('Categories:', categories); // Log categories here
-        res.render('add_food', { title: 'Add New Foods', categories: categories });
+        const categories = await Category.find({ active: 'Yes' });
+        res.render('add_food', { categories: categories });
     } catch (err) {
-        console.error('Error fetching categories:', err);
         res.status(500).send({ message: err.message });
     }
 });
 
-// Add Food route
+// Route to handle adding new food
 router.post('/add_food', upload.single('image'), async (req, res) => {
     try {
         const { body, file } = req;
+        let imageName = '';
 
-        if (!file) {
-            return res.status(400).send({ message: "Image is required." });
+        if (file) {
+            imageName = file.filename;
         }
 
         const newFood = new Food({
             title: body.title,
             description: body.description,
             price: body.price,
-            image_name: file.filename, 
-            category_id: body.category_id,
+            image_name: imageName,
+            category_id: body.category,
             featured: body.featured,
             active: body.active
         });
 
         await newFood.save();
-        res.redirect('/food?success=Food added successfully!');
+        res.redirect('/manage_food?success=Food added successfully!');
     } catch (err) {
-        console.error('Error adding food:', err);
-        res.status(500).send({ message: 'Failed to add food.' });
-    }
-});
-
-// Edit Food route
-router.get('/edit_food/:id', async (req, res) => {
-    try {
-        const food = await Food.findById(req.params.id);
-        res.render('edit_food', {
-            title: 'Edit Food',
-            food: food,
-        });
-    } catch (err) {
-        console.error('Error editing foods:', err);
-        res.redirect('/food');
-    }
-});
-
-// Route to handle updating food
-router.post('/update_food/:id', upload.single('image'), async (req, res) => {
-    try {
-        const { body, file, params } = req;
-
-        // Find the food by ID
-        const food = await Food.findById(params.id);
-        if (!food) {
-            return res.redirect('/add_food');
-        }
-
-        // Update food fields
-        food.title = body.title;
-        food.description = body.description,
-        food.price = body.price,
-        food.featured = body.featured;
-        food.active = body.active;
-
-        // Update image only if a new one is uploaded, otherwise keep the old image
-        if (file) {
-            food.image = file.filename;
-        } else {
-            food.image = body.old_image;
-        }
-
-        // Save updated category
-        await food.save();
-
-        // Redirect to the manage-food page with success message
-        res.redirect('/food?success=Food updated successfully!');
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
-});
-
-// Route to handle deleting a category
-router.get('/delete_food/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-        const food = await Food.findByIdAndDelete(id);
-
-        if (!food) {
-            return res.redirect('/food?error=Food not found!');
-        }
-
-        // Check if the food has an image and delete it
-        if (food.image) {
-            const imagePath = path.join(__dirname, '..', 'uploads', food.image);
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
-            } else {
-                console.log('Image not found:', imagePath);
-            }
-        }
-        res.redirect('/food?success=Food deleted successfully!');
-    } catch (err) {
-        console.error('Error deleting food:', err);
-        res.redirect('/food?error=Failed to delete food!');
+        console.error(err);
+        res.status(500).send({ message: 'Failed to add food' });
     }
 });
 

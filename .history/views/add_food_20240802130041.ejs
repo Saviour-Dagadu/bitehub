@@ -28,7 +28,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="category">Category</label>
-                            <select name="category" class="form-control form-control-lg">
+                            <select name="category" class="form-control form-control-lg" required>
                                 <% if (categories && categories.length > 0) { %>
                                     <% categories.forEach(function(category) { %>
                                         <option value="<%= category._id %>"><%= category.title %></option>

@@ -507,8 +507,7 @@ router.post('/add_food', upload.single('image'), async (req, res) => {
             title: body.title,
             description: body.description,
             price: body.price,
-            image_name: file.filename, 
-            category_id: body.category_id,
+            image: file.filename,
             featured: body.featured,
             active: body.active
         });

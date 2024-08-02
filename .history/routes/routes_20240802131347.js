@@ -485,7 +485,7 @@ router.get("/food", async (req, res) => {
 // Route to display the add food form
 router.get('/add_food', async (req, res) => {
     try {
-        const food = await Food.find();
+        const categories = await Category.find();
         console.log('Categories:', categories); // Log categories here
         res.render('add_food', { title: 'Add New Foods', categories: categories });
     } catch (err) {
@@ -507,8 +507,8 @@ router.post('/add_food', upload.single('image'), async (req, res) => {
             title: body.title,
             description: body.description,
             price: body.price,
-            image_name: file.filename, 
-            category_id: body.category_id,
+            image: file.filename,
+            category: body.category,
             featured: body.featured,
             active: body.active
         });
@@ -542,7 +542,7 @@ router.post('/update_food/:id', upload.single('image'), async (req, res) => {
 
         // Find the food by ID
         const food = await Food.findById(params.id);
-        if (!food) {
+        if (!category) {
             return res.redirect('/add_food');
         }
 
