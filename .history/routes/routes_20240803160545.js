@@ -508,22 +508,28 @@ router.get('/add_food', async (req, res) => {
 
 // Add Food route
 router.post('/add_food', upload.single('image'), async (req, res) => {
+    let categories;
     try {
-        const { body, file } = req;
-        const categories = await Category.find();
+        categories = await Category.find(); // Ensure categories are fetched
 
-        // Debug logging
-        console.log('Request body:', body);
-        console.log('Uploaded file:', file);
+        const { body, file } = req;
+        console.log('Request Body:', body);
+        console.log('File:', file);
 
         // Validate required fields
-        if (!body.title.trim() || !body.description.trim() || !body.price.trim() || !body.category.trim()) {
-            return res.redirect('/add_food?error=All fields are required except featured and active.');
+        if (!body.title || !body.description || !body.price || !body.category_id) {
+            return res.render('add_food', {
+                categories,
+                message: { text: "All fields are required except featured and active.", success: false }
+            });
         }
 
         // Validate image file
         if (!file) {
-            return res.redirect('/add_food?error=Image is required.');
+            return res.render('add_food', {
+                categories,
+                message: { text: "Image is required.", success: false }
+            });
         }
 
         const newFood = new Food({
@@ -531,21 +537,26 @@ router.post('/add_food', upload.single('image'), async (req, res) => {
             description: body.description,
             price: body.price,
             image_name: file.filename,
-            category_id: body.category, // Correct field name
+            category_id: body.category_id,
             featured: body.featured === 'Yes',
             active: body.active === 'Yes'
         });
 
+        console.log('New Food Object:', newFood);
+
         await newFood.save();
-        res.redirect('/food?success=Food added successfully!');
+        res.render('add_food', { categories, message: { text: "Food added successfully!", success: true } });
     } catch (err) {
-        console.error('Error adding food:', err);
-        res.redirect('/add_food?error=Failed to add food.');
+        console.error('Error adding food:', err.message);
+        
+        // In case of error, re-fetch categories for error view
+        if (!categories) {
+            categories = await Category.find();
+        }
+
+        res.render('add_food', { categories, message: { text: "Failed to add food.", success: false } });
     }
 });
-
-
-
 
 
 

@@ -128,6 +128,7 @@ router.get('/admin', isAuthenticated, async (req, res) => {
 
 
 // Dashboard route or Home route
+// Dashboard route or Home route
 router.get('/', isAuthenticated, async (req, res) => {
     try {
         const admin = await Admin.findById(req.session.adminId);
@@ -219,6 +220,17 @@ router.get('/add_admin', (req, res) => {
 // Add category form route
 router.get('/add_category', (req, res) => {
     res.render('add_category', { title: 'Add New Category' });
+});
+
+// Add food form route
+router.get('/add_food', async (req, res) => {
+    try {
+        const categories = await Category.find();
+        res.render('add_food', { categories });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error fetching categories');
+    }
 });
 
 // Get all admin route
@@ -484,13 +496,12 @@ router.get('/delete_category/:id', async (req, res) => {
 // Get all food route
 router.get("/food", async (req, res) => {
     try {
-        const allFoods = await Food.find();
-        res.render('manage_food', {
+        const admin = await food.find();
+        res.render('manage-food', {
             title: 'Manage Foods Page',
-            allFoods
+            admin: admin,
         });
     } catch (err) {
-        console.error(err);
         res.status(500).send({ message: err.message });
     }
 });
@@ -498,11 +509,12 @@ router.get("/food", async (req, res) => {
 // Route to display the add food form
 router.get('/add_food', async (req, res) => {
     try {
-        const categories = await Category.find();
-        res.render('add_food', { categories });
+        const food = await Food.find();
+        console.log('Categories:', categories); // Log categories here
+        res.render('add_food', { title: 'Add New Foods', categories: categories });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Error fetching categories');
+        console.error('Error fetching categories:', err);
+        res.status(500).send({ message: err.message });
     }
 });
 
@@ -510,44 +522,28 @@ router.get('/add_food', async (req, res) => {
 router.post('/add_food', upload.single('image'), async (req, res) => {
     try {
         const { body, file } = req;
-        const categories = await Category.find();
 
-        // Debug logging
-        console.log('Request body:', body);
-        console.log('Uploaded file:', file);
-
-        // Validate required fields
-        if (!body.title.trim() || !body.description.trim() || !body.price.trim() || !body.category.trim()) {
-            return res.redirect('/add_food?error=All fields are required except featured and active.');
-        }
-
-        // Validate image file
         if (!file) {
-            return res.redirect('/add_food?error=Image is required.');
+            return res.status(400).send({ message: "Image is required." });
         }
 
         const newFood = new Food({
             title: body.title,
             description: body.description,
             price: body.price,
-            image_name: file.filename,
-            category_id: body.category, // Correct field name
-            featured: body.featured === 'Yes',
-            active: body.active === 'Yes'
+            image_name: file.filename, 
+            category_id: body.category_id,
+            featured: body.featured,
+            active: body.active
         });
 
         await newFood.save();
         res.redirect('/food?success=Food added successfully!');
     } catch (err) {
         console.error('Error adding food:', err);
-        res.redirect('/add_food?error=Failed to add food.');
+        res.status(500).send({ message: 'Failed to add food.' });
     }
 });
-
-
-
-
-
 
 // Edit Food route
 router.get('/edit_food/:id', async (req, res) => {

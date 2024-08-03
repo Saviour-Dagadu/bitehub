@@ -1,0 +1,72 @@
+<%- include('layout/header.ejs')  %>
+
+<div class="container">
+    <div class="crow">
+        <div class="col-lg-4">
+            <h1>Dashboard</h1>
+            <div id="successMessage" class="alert alert-success text-center" style="display: none;"></div>
+            <div id="errorMessage" class="alert alert-danger text-center" style="display: none;"></div>
+        </div>
+        <div class="col-4 text-center">
+
+            <h1></h1>
+            <br />
+            Categories
+        </div>
+
+        <div class="col-4 text-center">
+
+            <h1></h1>
+            <br />
+            Foods
+        </div>
+
+        <div class="col-4 text-center">
+
+            <h1></h1>
+            <br />
+            Total Orders
+        </div>
+
+        <div class="col-4 text-center">
+            <h1></h1>
+            <br />
+            Revenue Generated
+        </div>
+    </div>
+</div>
+
+<%- include('layout/footer.ejs')  %>
+
+<script>
+    function showSuccessMessage(message) {
+      const successDiv = document.getElementById('successMessage');
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
+      setTimeout(() => {
+        successDiv.style.display = 'none';
+      }, 10000); // Hide after 10 seconds (10000 milliseconds)
+    }
+  
+    function showErrorMessage(message) {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 10000); // Hide after 10 seconds (10000 milliseconds)
+    }
+  
+    // Check for success or error message in query parameters
+    const params = new URLSearchParams(window.location.search);
+    const successMessage = params.get('success');
+    const errorMessage = params.get('error');
+  
+    if (successMessage) {
+      showSuccessMessage(successMessage);
+    }
+  
+    if (errorMessage) {
+      showErrorMessage(errorMessage);
+    }
+  </script>

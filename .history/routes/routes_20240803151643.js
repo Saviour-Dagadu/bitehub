@@ -128,6 +128,7 @@ router.get('/admin', isAuthenticated, async (req, res) => {
 
 
 // Dashboard route or Home route
+// Dashboard route or Home route
 router.get('/', isAuthenticated, async (req, res) => {
     try {
         const admin = await Admin.findById(req.session.adminId);
@@ -484,13 +485,12 @@ router.get('/delete_category/:id', async (req, res) => {
 // Get all food route
 router.get("/food", async (req, res) => {
     try {
-        const allFoods = await Food.find();
-        res.render('manage_food', {
+        const admin = await food.find();
+        res.render('manage-food', {
             title: 'Manage Foods Page',
-            allFoods
+            admin: admin,
         });
     } catch (err) {
-        console.error(err);
         res.status(500).send({ message: err.message });
     }
 });
@@ -510,20 +510,15 @@ router.get('/add_food', async (req, res) => {
 router.post('/add_food', upload.single('image'), async (req, res) => {
     try {
         const { body, file } = req;
-        const categories = await Category.find();
-
-        // Debug logging
-        console.log('Request body:', body);
-        console.log('Uploaded file:', file);
 
         // Validate required fields
-        if (!body.title.trim() || !body.description.trim() || !body.price.trim() || !body.category.trim()) {
-            return res.redirect('/add_food?error=All fields are required except featured and active.');
+        if (!body.title || !body.description || !body.price || !body.category_id) {
+            return res.render('add_food', { message: { text: "All fields are required except featured and active.", success: false } });
         }
 
         // Validate image file
         if (!file) {
-            return res.redirect('/add_food?error=Image is required.');
+            return res.render('add_food', { message: { text: "Image is required.", success: false } });
         }
 
         const newFood = new Food({
@@ -531,23 +526,18 @@ router.post('/add_food', upload.single('image'), async (req, res) => {
             description: body.description,
             price: body.price,
             image_name: file.filename,
-            category_id: body.category, // Correct field name
-            featured: body.featured === 'Yes',
-            active: body.active === 'Yes'
+            category_id: body.category_id,
+            featured: body.featured === 'on',
+            active: body.active === 'on'
         });
 
         await newFood.save();
-        res.redirect('/food?success=Food added successfully!');
+        res.render('add_food', { message: { text: "Food added successfully!", success: true } });
     } catch (err) {
         console.error('Error adding food:', err);
-        res.redirect('/add_food?error=Failed to add food.');
+        res.render('add_food', { message: { text: "Failed to add food.", success: false } });
     }
 });
-
-
-
-
-
 
 // Edit Food route
 router.get('/edit_food/:id', async (req, res) => {

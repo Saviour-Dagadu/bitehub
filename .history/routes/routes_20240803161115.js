@@ -512,18 +512,14 @@ router.post('/add_food', upload.single('image'), async (req, res) => {
         const { body, file } = req;
         const categories = await Category.find();
 
-        // Debug logging
-        console.log('Request body:', body);
-        console.log('Uploaded file:', file);
-
         // Validate required fields
-        if (!body.title.trim() || !body.description.trim() || !body.price.trim() || !body.category.trim()) {
-            return res.redirect('/add_food?error=All fields are required except featured and active.');
+        if (!body.title || !body.description || !body.price || !body.category) {
+            return res.redirect('/food?error=All fields are required except featured and active.');
         }
 
         // Validate image file
         if (!file) {
-            return res.redirect('/add_food?error=Image is required.');
+            return res.redirect('/food?error=Image is required.');
         }
 
         const newFood = new Food({
@@ -531,7 +527,7 @@ router.post('/add_food', upload.single('image'), async (req, res) => {
             description: body.description,
             price: body.price,
             image_name: file.filename,
-            category_id: body.category, // Correct field name
+            category_id: body.category,
             featured: body.featured === 'Yes',
             active: body.active === 'Yes'
         });
@@ -540,11 +536,9 @@ router.post('/add_food', upload.single('image'), async (req, res) => {
         res.redirect('/food?success=Food added successfully!');
     } catch (err) {
         console.error('Error adding food:', err);
-        res.redirect('/add_food?error=Failed to add food.');
+        res.redirect('/food?error=Failed to add food.');
     }
 });
-
-
 
 
 

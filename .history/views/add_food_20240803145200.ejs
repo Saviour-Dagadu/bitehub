@@ -1,4 +1,4 @@
-<%- include('layout/header.ejs') %>
+<%- include('layout/header.ejs')  %>
 
 <div class="container">
     <div class="row">
@@ -27,7 +27,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="category">Category</label>
-                            <select name="category_id" class="form-control form-control-lg">
+                            <select name="category" class="form-control form-control-lg">
                                 <% if (categories && categories.length > 0) { %>
                                     <% categories.forEach(function(category) { %>
                                         <option value="<%= category._id %>"><%= category.title %></option>
