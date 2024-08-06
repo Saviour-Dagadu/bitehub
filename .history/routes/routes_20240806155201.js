@@ -574,19 +574,26 @@ router.post('/update_food/:id', upload.single('image'), async (req, res) => {
         // Find the food by ID
         const food = await Food.findById(params.id);
         if (!food) {
-            return res.redirect('/add_food');
+            return res.redirect('/food?error=Food not found!');
         }
 
-        // Convert "Yes" to true and "No" to false for featured and active fields
+        // Update food fields
         food.title = body.title;
         food.description = body.description;
-        food.price = body.price;
+        food.price = parseFloat(body.price); // Ensure price is a float
         food.category_id = body.category_id;
-        food.featured = body.featured === 'Yes'; // Convert to boolean
-        food.active = body.active === 'Yes'; // Convert to boolean
+        food.featured = body.featured;
+        food.active = body.active;
 
         // Update image only if a new one is uploaded, otherwise keep the old image
         if (file) {
+            // Delete old image if a new one is uploaded
+            if (food.image) {
+                const oldImagePath = path.join(__dirname, '..', 'uploads', food.image);
+                if (fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+            }
             food.image = file.filename;
         } else {
             food.image = body.old_image;
@@ -598,6 +605,7 @@ router.post('/update_food/:id', upload.single('image'), async (req, res) => {
         // Redirect to the manage-food page with success message
         res.redirect('/food?success=Food updated successfully!');
     } catch (err) {
+        console.error('Error updating food:', err);
         res.status(500).send({ message: err.message });
     }
 });

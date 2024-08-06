@@ -510,14 +510,14 @@ router.get('/add_food', async (req, res) => {
 router.post('/add_food', upload.single('image'), async (req, res) => {
     try {
         const { body, file } = req;
-        const price = parseFloat(body.price);
+        const categories = await Category.find();
 
         // Debug logging
         console.log('Request body:', body);
         console.log('Uploaded file:', file);
 
         // Validate required fields
-        if (!body.title.trim() || !body.description.trim() || !body.price.trim() || !body.category_id.trim()) {
+        if (!body.title.trim() || !body.description.trim() || !body.price.trim() || !body.category.trim()) {
             return res.redirect('/add_food?error=All fields are required except featured and active.');
         }
 
@@ -531,7 +531,7 @@ router.post('/add_food', upload.single('image'), async (req, res) => {
             description: body.description,
             price: body.price,
             image_name: file.filename,
-            category_id: body.category_id,
+            category_id: body.category, // Correct field name
             featured: body.featured === 'Yes',
             active: body.active === 'Yes'
         });
@@ -544,24 +544,21 @@ router.post('/add_food', upload.single('image'), async (req, res) => {
     }
 });
 
+
+
+
+
+
 // Edit Food route
 router.get('/edit_food/:id', async (req, res) => {
     try {
-        const foodId = req.params.id;
-        const food = await Food.findById(foodId);
-        const categories = await Category.find(); // Fetch all categories
-
-        if (!food) {
-            return res.status(404).send('Food not found');
-        }
-
+        const food = await Food.findById(req.params.id);
         res.render('edit_food', {
             title: 'Edit Food',
             food: food,
-            categories: categories // Pass categories to the view
         });
     } catch (err) {
-        console.error('Error editing food:', err);
+        console.error('Error editing foods:', err);
         res.redirect('/food');
     }
 });
@@ -577,13 +574,12 @@ router.post('/update_food/:id', upload.single('image'), async (req, res) => {
             return res.redirect('/add_food');
         }
 
-        // Convert "Yes" to true and "No" to false for featured and active fields
+        // Update food fields
         food.title = body.title;
-        food.description = body.description;
-        food.price = body.price;
-        food.category_id = body.category_id;
-        food.featured = body.featured === 'Yes'; // Convert to boolean
-        food.active = body.active === 'Yes'; // Convert to boolean
+        food.description = body.description,
+        food.price = body.price,
+        food.featured = body.featured;
+        food.active = body.active;
 
         // Update image only if a new one is uploaded, otherwise keep the old image
         if (file) {
@@ -592,7 +588,7 @@ router.post('/update_food/:id', upload.single('image'), async (req, res) => {
             food.image = body.old_image;
         }
 
-        // Save updated food
+        // Save updated category
         await food.save();
 
         // Redirect to the manage-food page with success message
@@ -602,7 +598,7 @@ router.post('/update_food/:id', upload.single('image'), async (req, res) => {
     }
 });
 
-// Route to handle deleting a food
+// Route to handle deleting a category
 router.get('/delete_food/:id', async (req, res) => {
     try {
         const id = req.params.id;
@@ -621,7 +617,6 @@ router.get('/delete_food/:id', async (req, res) => {
                 console.log('Image not found:', imagePath);
             }
         }
-
         res.redirect('/food?success=Food deleted successfully!');
     } catch (err) {
         console.error('Error deleting food:', err);

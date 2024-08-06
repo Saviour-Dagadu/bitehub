@@ -29,10 +29,10 @@
                                     <td><img src="/uploads/<%= food.image_name %>" width="50" class="img-thumbnail" alt="<%= food.title %>"></td>
                                     <td><%= food.title %></td>
                                     <td><%= food.description %></td>
-                                    <td>Ghc <%= food.price.toFixed(2) %></td>
+                                    <td>Ghc <%= food.price %></td>
                                     <td>
-                                        <a href="/edit_food/<%= food._id %>" class="text-success"><i class="fas fa-edit fa-lg mx-1"></i></a>
-                                        <a href="/delete_food/<%= food._id %>" class="text-danger"><i class="fas fa-trash fa-lg mx-1"></i></a>
+                                        <a href="/edit/<%= food._id %>" class="text-success"><i class="fas fa-edit fa-lg mx-1"></i></a>
+                                        <a href="/delete/<%= food._id %>" class="text-danger"><i class="fas fa-trash fa-lg mx-1"></i></a>
                                     </td>
                                 </tr>
                             <% }) %>

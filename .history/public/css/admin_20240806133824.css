@@ -132,20 +132,28 @@ table tr td{
     padding: 2%;
 }
 
-/* Background Section */
+/* Background container */
 .background-container {
-    background-image: url('https://picsum.photos/1920/1080'); /* Replace with your desired image URL */
+    background-image: url('https://picsum.photos/1920/1080');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    min-height: 100vh; /* Ensures the container takes up the full viewport height */
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
 }
 
-/* Centered Login Form */
+/* Login container */
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Login form styling */
 .login-form {
     background-color: white;
     padding: 2rem;
@@ -182,7 +190,7 @@ table tr td{
     border-radius: 0.25rem;
 }
 
-button {
+.submit-button {
     background-color: #007bff;
     color: white;
     border: none;
@@ -191,4 +199,8 @@ button {
     width: 100%;
     cursor: pointer;
     font-size: 1rem;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
 }

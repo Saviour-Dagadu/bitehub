@@ -1,0 +1,45 @@
+<%- include('layout/header.ejs', { title: 'Login' }) %>
+
+<div class="bg-cover bg-center bg-fixed" style="background-image: url('https://picsum.photos/1920/1080'); min-height: 100vh;">
+    <!-- Modal Container -->
+    <div id="loginModal" class="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50 hidden">
+        <div class="bg-white p-8 rounded shadow-md w-full md:w-1/2 lg:w-1/3">
+            <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
+            <% if (message) { %>
+                <div class="alert alert-danger mb-4" role="alert">
+                    <%= message %>
+                </div>
+            <% } %>
+            <form action="/login" method="POST">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Button to Trigger Modal -->
+    <div class="flex justify-center items-center h-screen">
+        <button id="openModalButton" class="bg-blue-500 text-white px-4 py-2 rounded">Open Login Modal</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('openModalButton').addEventListener('click', function() {
+        document.getElementById('loginModal').classList.remove('hidden');
+    });
+
+    document.getElementById('loginModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+        }
+    });
+</script>
+
+<%- include('layout/footer.ejs') %>
