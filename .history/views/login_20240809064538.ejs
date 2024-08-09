@@ -1,0 +1,41 @@
+<%- include('layout/header.ejs', { title: 'Login' }) %>
+
+<!-- Background Section with Inline CSS -->
+<div class="bg-cover bg-center bg-fixed min-h-screen flex items-center justify-center p-4" style="background-image: url('https://example.com/food-background.jpg');">
+    <!-- Centered Login Form -->
+    <div class="bg-white p-8 rounded-lg shadow-md max-w-md w-full flex flex-col items-center">
+        <a href="#" class="flex items-center mb-6 text-gray-800 text-xl font-bold">
+            <img src="/uploads/meat.png" alt="logo" class="w-8 h-8 mr-2">
+            BiteHub
+        </a>
+        <h2 class="text-2xl mb-6 text-center">Login</h2>
+        <% if (message) { %>
+            <div class="text-red-500 mb-4" role="alert">
+                <%= message %>
+            </div>
+        <% } %>
+        <form action="/login" method="POST" class="w-full flex flex-col gap-4">
+            <div>
+                <label for="username" class="block mb-2 text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter Username" required class="w-full p-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900">
+            </div>
+            <div>
+                <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required class="w-full p-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900">
+            </div>
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <input id="remember" aria-describedby="remember" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 mr-2" required>
+                    <label for="remember" class="text-sm text-gray-600">Remember me</label>
+                </div>
+                <a href="#" class="text-sm text-blue-500 hover:underline">Forgot password?</a>
+            </div>
+            <button type="submit" class="bg-blue-500 text-white border-none p-2 rounded-md w-full cursor-pointer text-center text-lg font-medium">Login</button>
+            <p class="text-sm text-gray-600 mt-4 text-center">
+                Don’t have an account yet? <a href="#" class="text-blue-500 hover:underline">Sign up</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+<%- include('layout/footer.ejs') %>
