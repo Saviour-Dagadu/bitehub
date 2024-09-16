@@ -12,7 +12,7 @@ Introduction :
 
 **Link to project:** https://bitehubs.netlify.app/
 
-![alt tag](https://i.postimg.cc/hvjMJbGL/Screenshot-127.png)
+![alt tag](https://i.postimg.cc/QNKJY37V/bitehub-front.png)
 
 ## How It's Made:
 
